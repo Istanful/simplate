@@ -6,29 +6,46 @@ var Simplate = function(structure) {
 }
 
 Simplate.DOM = function() {};
-Simplate.DOM.builderFor = function(content) {
-	if (typeof content === 'object') {
-		return Simplate.DOM.ObjectBuilder;
-	}
-	return Simplate.DOM.PlainBuilder;
-}
-
 Simplate.DOM.build = function(content, wrapper) {
-	wrapper = wrapper || document.createElement('div');
+	var wrapper = wrapper || document.createElement('div');
 	return Simplate.DOM.builderFor(content).build(content, wrapper);
 }
 
-Simplate.DOM.ObjectBuilder = function() {};
-Simplate.DOM.ObjectBuilder.build = function(content, wrapper) {
-	for (var key in content) {
-		if (Simplate.supportedTag(key)) {
-			var newWrapper = document.createElement(key);
-			var domObj = Simplate.DOM.build(content[key], newWrapper);
-			wrapper.appendChild(domObj);
-		} else {
-			wrapper[key] = content[key];
-		}
+Simplate.DOM.builderFor = function(content) {
+  switch (content.constructor.name) {
+    case 'Array':
+      return Simplate.DOM.ArrayBuilder;
+      break;
+    default:
+      return Simplate.DOM.PlainBuilder;
+  }
+}
+
+Simplate.DOM.ArrayBuilder = function() {};
+Simplate.DOM.ArrayBuilder.build = function(content, wrapper) {
+  var tagOrStructure = content[0];
+  var attributes = content[1] || {};
+  var children = content[2] || '';
+  var element;
+
+  if (tagOrStructure.constructor.name == 'Array') {
+    content.forEach((structure) => {
+      Simplate.DOM.build(structure, wrapper);
+    });
+    return wrapper;
+  }
+
+  if (Simplate.supportedTag(tagOrStructure)) {
+    element = document.createElement(tagOrStructure);
+    wrapper.appendChild(element);
+  }
+
+  Simplate.DOM.build(children, element);
+
+	for (var key in attributes) {
+    element[key] = attributes[key];
 	}
+
 	return wrapper;
 }
 

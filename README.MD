@@ -3,13 +3,10 @@ Simplate is a simple JavaScript HTML builder with templates. With less than a hu
 
 # A simple example
 ```JavaScript
-var template = new Simplate((props) => {
-  h1: props.title,
-  p: {
-    className: 'paragraph',
-    innerHTML: props.content
-  }
-});
+var template = new Simplate((props) => [
+  ['h1', {}, props.title],
+  ['p', { className: 'paragraph' }, props.content]
+]);
 
 template.render({
   title: 'Simplate is a simple JavaScript HTML builder',
@@ -24,9 +21,9 @@ you can combine it with jQuery or just go plain vanilla!
 ## Building HTML nodes
 You can construct an element like so:
 ```JavaScript
-Simplate.DOM.build({
-  h1: 'Simplate is awesome!',
-})
+Simplate.DOM.build([
+  ['h1', {}, 'Simplate is awesome!']
+]);
 ```
 
 Which will return a node representing:
@@ -43,36 +40,33 @@ as a parameter.
 
 ```JavaScript
 var contentWrapper = document.GetElementById('content');
-Simplate.DOM.build({
-  h1: 'Simplate is awesome!',
-}, contentWrapper);
+Simplate.DOM.build([
+  ['h1', {}, 'Simplate is awesome!']
+], contentWrapper);
 ```
 
-You can add attributes to the node by providing an object instead of a string.
+You can add attributes to the node by providing an object.
 The content must then be provided with the `innerHTML` attribute.
 ```JavaScript
-Simplate.DOM.build({
-  p: {
-    className: 'paragraph',
-    innerHTML: 'Wow, this is handy.'
-  }
-});
+Simplate.DOM.build([
+  ['p', { className: 'paragraph' }, 'Wow, this is handy']
+]);
 ```
 
 ## Creating templates
 To create a template you provide an anonymous function that returns the structure used to build the content. The function will be passed the `props` object which will contain any dynamic content you want to output.
 ```JavaScript
-var template = new Simplate((props) => {
-  h1: props.title,
-  p: props.paragraph
-})
+var template = new Simplate((props) => [
+  ['h1', {}, props.title],
+  ['p', { className: 'paragraph' }, props.content]
+]);
 ```
 
 By calling render on the template you obtain a HTML node just like you would when calling `Template.DOM.build`
 
 Given the previous template you call:
 ```JavaScript
-template.render({ title: 'My title', paragraph: 'My paragraph' });
+template.render({ title: 'My title', content: 'My paragraph' });
 ```
 
 Would return a node representing:
@@ -85,7 +79,7 @@ Would return a node representing:
 
 Just like with the `Template.DOM.build` function you can provide an optional wrapper.
 ```JavaScript
-var contentWrapper = document.GetElementById('content');
+var contentWrapper = document.GetElementById('content-wrapper');
 template.render({
   title: 'My title',
   paragraph: 'My paragraph'
