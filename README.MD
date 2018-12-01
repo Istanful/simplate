@@ -1,7 +1,7 @@
 # Simplate
 Simplate is a simple JavaScript HTML builder with templates. With less than a hundred lines Simplate is the perfect solution if you want to write HTML in javascript without struggling with string interpolation or boring Javascript HTML nodes.
 
-# A simple example
+# Synopsis
 ```JavaScript
 var template = new Simplate((props) => [
   ['h1', {}, props.title],
